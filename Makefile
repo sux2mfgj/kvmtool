@@ -18,17 +18,17 @@ export E Q
 include config/utilities.mak
 include config/feature-tests.mak
 
+prefix = $(HOME)
 CC	:= $(CROSS_COMPILE)gcc
-CFLAGS	:=
+CFLAGS	:= -I$(prefix)/include
 LD	:= $(CROSS_COMPILE)ld
-LDFLAGS	:=
+LDFLAGS	:= -L$(prefix)/lib
 
 FIND	:= find
 CSCOPE	:= cscope
 TAGS	:= ctags
 INSTALL := install
 
-prefix = $(HOME)
 bindir_relative = bin
 bindir = $(prefix)/$(bindir_relative)
 
@@ -326,7 +326,7 @@ $(warning No static libc found. Skipping guest init)
 endif
 
 ifeq (y,$(ARCH_WANT_LIBFDT))
-	ifneq ($(call try-build,$(SOURCE_LIBFDT),$(CFLAGS),-lfdt),y)
+	ifneq ($(call try-build,$(SOURCE_LIBFDT),$(CFLAGS),$(LDFLAGS) -lfdt),y)
           $(error No libfdt found. Please install libfdt-dev package)
 	else
 		CFLAGS_DYNOPT	+= -DCONFIG_HAS_LIBFDT
